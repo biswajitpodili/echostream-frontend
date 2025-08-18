@@ -1,12 +1,32 @@
 import { Routes, Route } from "react-router";
 import DashboardLayout from "./layouts/DashboardLayout";
-import Home from "./pages/dashboard/Home";
+import Home from "@/pages/dashboard/Home";
+import LoginPage from "./pages/auth/LoginPage";
+import UserProfile from "./pages/dashboard/UserProfile";
+import { useAuth } from "./context/useAuth";
 
 const AppRoutes = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Show loading spinner while checking auth status
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // If not authenticated, show login page
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
   return (
     <Routes>
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<Home />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route
           path="/streaming/live-streaming"
           element={<div>Live Streaming Page</div>}
