@@ -1,17 +1,7 @@
-import * as React from "react";
-import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  LifeBuoy,
-  PieChart,
-  Send,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
+import { Command } from "lucide-react";
 
-import { NavUser } from "@/components/nav-user";
+import * as React from "react";
+
 import {
   Sidebar,
   SidebarContent,
@@ -24,10 +14,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { Button } from "./ui/button";
+import { Link, useLocation } from "react-router";
 
-// This is sample data.
 const data = {
   user: {
     name: "shadcn",
@@ -36,108 +26,122 @@ const data = {
   },
   navMain: [
     {
-      title: "Getting Started",
+      title: "Streaming",
       url: "#",
       items: [
         {
-          title: "Installation",
-          url: "#",
+          title: "Home",
+          url: "/",
         },
         {
-          title: "Project Structure",
-          url: "#",
+          title: "Live Streams",
+          url: "/streaming/live-streaming",
+        },
+        {
+          title: "Subscriptions",
+          url: "/streaming/subscriptions",
         },
       ],
     },
     {
-      title: "Building Your Application",
+      title: "Videos Management",
       url: "#",
       items: [
         {
-          title: "Routing",
-          url: "#",
+          title: "Playlists",
+          url: "/videos/playlists",
         },
         {
-          title: "Data Fetching",
-          url: "#",
+          title: "Watch later",
+          url: "/videos/watch-later",
+        },
+        {
+          title: "Liked videos",
+          url: "/videos/liked-videos",
+        },
+        {
+          title: "History",
+          url: "/videos/history",
+        },
+      ],
+    },
+    {
+      title: "Channel Management",
+      url: "#",
+      items: [
+        {
+          title: "Upload a Video",
+          url: "/channel/upload-video",
+        },
+        {
+          title: "Your Videos",
+          url: "/channel/your-videos",
           isActive: true,
         },
         {
-          title: "Rendering",
-          url: "#",
+          title: "Your Subscribers",
+          url: "/channel/your-subscribers",
         },
         {
-          title: "Caching",
-          url: "#",
+          title: "Video Engagements",
+          url: "/channel/video-engagements",
         },
         {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
+          title: "Channel Settings",
+          url: "/channel/settings",
         },
       ],
-    }
-   
+    },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { pathname } = useLocation();
+  const [navData, setNavData] = React.useState(data);
+
+   React.useEffect(() => {
+    const updatedNavData = {
+      ...navData,
+      navMain: navData.navMain.map((group) => ({
+        ...group,
+        items: group.items.map((navItem) => ({
+          ...navItem,
+          isActive: navItem.url === pathname,
+        })),
+      })),
+    };
+
+    setNavData(updatedNavData);
+  }, [pathname]);
+
+
   return (
-    <Sidebar {...props} variant="inset">
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">EchoStream</span>
-                  <span className="truncate text-xs">Video Streaming</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+    <Sidebar {...props}>
+      <SidebarHeader className="border-sidebar-border h-16 border-b">
+        <div className="flex items-center justify-between px-4 h-full">
+          <a href="#" className="flex items-center gap-2 flex-row">
+            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+              <Command className="size-4" />
+            </div>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">EchoStream</span>
+              <span className="truncate text-xs">Video Streaming</span>
+            </div>
+          </a>
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        {data.navMain.map((item) => (
+        {navData.navMain.map((item) => (
           <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+            <SidebarGroupLabel className="font-semibold text-stone-600">
+              {item.title}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
+                      <Link to={item.url}>{item.title}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -146,10 +150,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      {/* <SidebarSeparator className="mx-0" />
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter> */}
+      <SidebarFooter className="border-sidebar-border h-16 border-t flex justify-center items-center">
+        <Button className="w-full">
+          <a href={"#"}>Logout</a>
+        </Button>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

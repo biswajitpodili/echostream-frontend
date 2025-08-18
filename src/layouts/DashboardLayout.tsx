@@ -21,20 +21,20 @@ import {
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
-  SidebarMenuButton,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
   BadgeCheck,
   Bell,
-  ChevronsUpDown,
   CreditCard,
   LogOut,
   Search,
   Sparkles,
   User,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router";
 
 export default function DashboardLayout() {
   const user = {
@@ -42,6 +42,23 @@ export default function DashboardLayout() {
     email: "john.doe@example.com",
     avatar: "https://via.placeholder.com/150",
   };
+
+  const { pathname } = useLocation();
+
+  const [group, setGroup] = useState("");
+  const [item, setItem] = useState("");
+
+  useEffect(() => {
+    const subGroup = pathname.split("/")[1];
+    const item = pathname.split("/")[2];
+
+    setGroup(subGroup);
+    setItem(item);
+  }, [pathname]);
+
+  console.log("Current sub-group:", group);
+  console.log("Current item:", item);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -57,12 +74,14 @@ export default function DashboardLayout() {
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbLink href="#">
-                    Building Your Application
+                    {group?.split("/").pop()?.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') || 'Dashboard'}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>
+                    {item?.split("/").pop()?.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') || 'Home'}
+                  </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -144,33 +163,7 @@ export default function DashboardLayout() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-2 sm:grid-cols-2 md:grid-cols-4">
-            {Array.from({ length: 200 }).map((_, i) => (
-              <div className="hover:bg-muted/50 transition-colors rounded-xl overflow-hidden cursor-pointer p-2">
-                <div key={i} className="bg-muted/50 aspect-video rounded-xl" />
-                <div className="p-3 space-y-2">
-                  <h3 className="font-medium text-sm line-clamp-2">
-                    Video Title Here
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                      <span className="text-xs font-semibold">C</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-muted-foreground truncate">
-                        Channel Name
-                      </p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <span>1.2M views</span>
-                        <span>•</span>
-                        <span>2 days ago</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Outlet />
         </div>
       </SidebarInset>
     </SidebarProvider>

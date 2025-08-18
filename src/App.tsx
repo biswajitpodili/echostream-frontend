@@ -1,13 +1,15 @@
 import { ThemeProvider } from "@/components/theme-provider";
-import DashboardLayout from "./layouts/DashboardLayout";
+import { BrowserRouter } from "react-router";
+import AppRoutes from "./AppRoutes";
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="poppins-regular">
-        <DashboardLayout />
-      </div>
-      {/* Other components can go here */}
+      <BrowserRouter>
+        <div className="poppins-regular">
+          <AppRoutes />
+        </div>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
