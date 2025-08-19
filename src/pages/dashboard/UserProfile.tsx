@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, RefreshCw, User, Camera, Calendar, Mail, AtSign, Hash, Play } from 'lucide-react';
+import { LogOut, RefreshCw, User, Calendar, Mail, AtSign, Hash, Play } from 'lucide-react';
 
 export default function UserProfile() {
   const { 
