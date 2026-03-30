@@ -1,7 +1,18 @@
-import { Command } from "lucide-react";
-
+import { Home, Star, Search, Heart, Clock, Upload, Video, Users, Lock } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import * as React from "react";
+import { FaStream } from "react-icons/fa";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -16,146 +27,201 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
+import { useAuth } from "@/context/useAuth";
+
+interface NavItem {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  requiresAuth: boolean;
+}
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
-      title: "Streaming",
-      url: "#",
+      title: "Navigation",
       items: [
         {
           title: "Home",
           url: "/",
+          icon: Home,
+          requiresAuth: false,
         },
         {
-          title: "Live Streams",
-          url: "/streaming/live-streaming",
+          title: "Search Creators",
+          url: "/channel-search",
+          icon: Search,
+          requiresAuth: false,
         },
         {
           title: "Subscriptions",
           url: "/streaming/subscriptions",
+          icon: Star,
+          requiresAuth: true,
         },
-      ],
+        
+        {
+          title: "Profile",
+          url: "/profile",
+          icon: Users,
+          requiresAuth: true,
+        },
+      ] as NavItem[],
     },
     {
-      title: "Videos Management",
-      url: "#",
+      title: "Content",
       items: [
         {
-          title: "Playlists",
-          url: "/videos/playlists",
-        },
-        {
-          title: "Watch later",
-          url: "/videos/watch-later",
-        },
-        {
-          title: "Liked videos",
+          title: "Liked Videos",
           url: "/videos/liked-videos",
+          icon: Heart,
+          requiresAuth: true,
         },
         {
           title: "History",
           url: "/videos/history",
+          icon: Clock,
+          requiresAuth: true,
         },
-      ],
+      ] as NavItem[],
     },
     {
-      title: "Channel Management",
-      url: "#",
+      title: "Manager",
       items: [
         {
-          title: "Upload a Video",
+          title: "Upload Video",
           url: "/channel/upload-video",
+          icon: Upload,
+          requiresAuth: true,
         },
         {
           title: "Your Videos",
           url: "/channel/your-videos",
-          isActive: true,
+          icon: Video,
+          requiresAuth: true,
         },
         {
           title: "Your Subscribers",
           url: "/channel/your-subscribers",
+          icon: Users,
+          requiresAuth: true,
         },
-        {
-          title: "Video Engagements",
-          url: "/channel/video-engagements",
-        },
-        {
-          title: "Channel Settings",
-          url: "/channel/settings",
-        },
-      ],
+      ] as NavItem[],
     },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation();
-  const [navData, setNavData] = React.useState(data);
+  const navigate = useNavigate();
+  const { logout, isAuthenticated } = useAuth();
+  const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
+  const [lockedTarget, setLockedTarget] = React.useState<{ url: string; title: string } | null>(null);
 
-   React.useEffect(() => {
-    const updatedNavData = {
-      ...navData,
-      navMain: navData.navMain.map((group) => ({
-        ...group,
-        items: group.items.map((navItem) => ({
-          ...navItem,
-          isActive: navItem.url === pathname,
-        })),
-      })),
-    };
+  const handleLockedItemClick = (url: string, title: string) => {
+    setLockedTarget({ url, title });
+    setLoginDialogOpen(true);
+  };
 
-    setNavData(updatedNavData);
-  }, [pathname]);
-
+  const handleConfirmLogin = () => {
+    if (!lockedTarget) return;
+    setLoginDialogOpen(false);
+    navigate("/login", { state: { from: lockedTarget.url } });
+  };
 
   return (
+    <>
     <Sidebar {...props}>
-      <SidebarHeader className="border-sidebar-border h-16 border-b">
-        <div className="flex items-center justify-between px-4 h-full">
-          <a href="#" className="flex items-center gap-2 flex-row">
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <Command className="size-4" />
-            </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">EchoStream</span>
-              <span className="truncate text-xs">Video Streaming</span>
+      <SidebarHeader className="border-sidebar-border h-20 border-b">
+        <div className="flex items-center px-4 h-full">
+          <a
+            href="#"
+            className="group relative inline-flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-white/15 bg-gradient-to-r from-sidebar-primary via-sidebar-primary/90 to-sidebar-primary/80 px-3.5 py-2.5 text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/35"
+          >
+            <span className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-white/15 blur-2xl" />
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 ring-1 ring-white/25 transition-transform duration-300 group-hover:scale-110">
+              <FaStream className="h-4 w-4" />
+            </span>
+            <div className="flex min-w-0 flex-col leading-tight">
+              <span className="truncate text-sm font-black tracking-[0.03em]">Echo <span className="hidden sm:inline">Stream</span></span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80">Video Platform</span>
             </div>
           </a>
         </div>
       </SidebarHeader>
+
       <SidebarContent>
-        {navData.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
+        {data.navMain.map((group) => (
+          <SidebarGroup key={group.title}>
             <SidebarGroupLabel className="font-semibold text-stone-600">
-              {item.title}
+              {group.title}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <Link to={item.url}>{item.title}</Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {group.items.map((item) => {
+                  const IconComponent = item.icon;
+                  const isLocked = item.requiresAuth && !isAuthenticated;
+
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      {isLocked ? (
+                        <SidebarMenuButton
+                          onClick={() => handleLockedItemClick(item.url, item.title)}
+                          title="Login required"
+                          className="opacity-65"
+                        >
+                          <IconComponent size={18} />
+                          <span>{item.title}</span>
+                          <Lock size={14} className="ml-auto" />
+                        </SidebarMenuButton>
+                      ) : (
+                        <SidebarMenuButton asChild isActive={item.url === pathname}>
+                          <Link to={item.url} className="flex items-center gap-2">
+                            <IconComponent size={18} />
+                            {item.title}
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
       </SidebarContent>
+
       <SidebarFooter className="border-sidebar-border h-16 border-t flex justify-center items-center">
-        <Button className="w-full">
-          <a href={"#"}>Logout</a>
-        </Button>
+        {isAuthenticated ? (
+          <Button onClick={logout} className="w-full">
+            Logout
+          </Button>
+        ) : (
+          <Button
+            onClick={() => navigate("/login", { state: { from: pathname } })}
+            className="w-full"
+          >
+            Login
+          </Button>
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
+    <AlertDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Login Required</AlertDialogTitle>
+          <AlertDialogDescription>
+            {lockedTarget?.title || "This section"} is available only after login. Continue to login?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirmLogin}>Login</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

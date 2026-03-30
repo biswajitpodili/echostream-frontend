@@ -1,45 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/context/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2 } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router';
-import { FaStream } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { Loader2 } from "lucide-react";
+import { useAuth } from "@/context/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FaStream } from "react-icons/fa";
 
-export default function LoginPage() {
-  const { login, isLoading, error, clearError, isAuthenticated } = useAuth();
+export default function SignupPage() {
+  const { signup, isLoading, error, clearError, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectTo = (location.state as { from?: string } | null)?.from || '/';
+  const redirectTo = (location.state as { from?: string } | null)?.from || "/";
+
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    fullname: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
+  const [localError, setLocalError] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
-    // Clear error when user starts typing
-    if (error) {
-      clearError();
-    }
+
+    if (error) clearError();
+    if (localError) setLocalError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    if (formData.password !== formData.confirmPassword) {
+      setLocalError("Passwords do not match");
+      return;
+    }
+
     try {
-      await login(formData.username, formData.password);
-      navigate(redirectTo, { replace: true });
+      await signup(formData.username, formData.password, formData.fullname);
+      navigate("/login", { replace: true, state: { from: redirectTo } });
     } catch (err) {
-      // Error is handled by the auth context
-      console.error('Login failed:', err);
+      console.error("Signup failed:", err);
     }
   };
 
@@ -48,6 +54,8 @@ export default function LoginPage() {
       navigate(redirectTo, { replace: true });
     }
   }, [isAuthenticated, navigate, redirectTo]);
+
+  const hasError = localError || error;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -61,20 +69,36 @@ export default function LoginPage() {
             <span className="text-sm font-black tracking-[0.03em]">Echo <span className="">Stream</span></span>
           </div>
           <CardTitle className="text-2xl font-bold text-center">
-            Welcome back
+            Create account
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Sign up to start your EchoStream journey
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+            {hasError && (
               <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription>{localError || error}</AlertDescription>
               </Alert>
             )}
-            
+
+            <div className="space-y-2">
+              <label htmlFor="fullname" className="text-sm font-medium">
+                Full Name
+              </label>
+              <Input
+                id="fullname"
+                name="fullname"
+                type="text"
+                value={formData.fullname}
+                onChange={handleInputChange}
+                placeholder="Enter your full name"
+                required
+                disabled={isLoading}
+              />
+            </div>
+
             <div className="space-y-2">
               <label htmlFor="username" className="text-sm font-medium">
                 Username
@@ -85,12 +109,12 @@ export default function LoginPage() {
                 type="text"
                 value={formData.username}
                 onChange={handleInputChange}
-                placeholder="Enter your username"
+                placeholder="Choose a username"
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-medium">
                 Password
@@ -101,36 +125,58 @@ export default function LoginPage() {
                 type="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm Password
+              </label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder="Confirm your password"
+                required
+                disabled={isLoading}
+              />
+            </div>
+
             <Button
               type="submit"
               className="w-full"
-              disabled={isLoading || !formData.username || !formData.password}
+              disabled={
+                isLoading ||
+                !formData.fullname ||
+                !formData.username ||
+                !formData.password ||
+                !formData.confirmPassword
+              }
             >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  Creating account...
                 </>
               ) : (
-                'Sign in'
+                "Sign up"
               )}
             </Button>
           </form>
-          
+
           <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Don't have an account? </span>
+            <span className="text-muted-foreground">Already have an account? </span>
             <button
               type="button"
-              onClick={() => navigate('/signup', { state: { from: redirectTo } })}
+              onClick={() => navigate("/login", { state: { from: redirectTo } })}
               className="text-primary hover:underline font-medium"
             >
-              Sign up
+              Sign in
             </button>
           </div>
         </CardContent>

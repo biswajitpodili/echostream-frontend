@@ -1,9 +1,14 @@
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, RefreshCw, User, Calendar, Mail, AtSign, Hash, Play } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LogOut, RefreshCw, User, Calendar, Mail, AtSign, Hash, Play, Pencil } from 'lucide-react';
+import { formatDateDDMMYYYY } from '@/lib/utils';
+import api from '@/lib/api';
 
 export default function UserProfile() {
   const { 
@@ -11,8 +16,28 @@ export default function UserProfile() {
     isAuthenticated, 
     isLoading, 
     logout, 
-    refreshUser 
+    refreshUser,
+    updateUser,
+    clearError,
+    error,
   } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+  const [formData, setFormData] = useState({
+    fullname: '',
+    email: '',
+  });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (!userDetails) return;
+    setFormData({
+      fullname: userDetails.fullname || '',
+      email: userDetails.email || '',
+    });
+  }, [userDetails]);
 
   if (!isAuthenticated) {
     return (
@@ -56,8 +81,74 @@ export default function UserProfile() {
     }
   };
 
+  const handleEditStart = () => {
+    if (!userDetails) return;
+    clearError();
+    setSaveMessage('');
+    setFormData({
+      fullname: userDetails.fullname || '',
+      email: userDetails.email || '',
+    });
+    setAvatarFile(null);
+    setCoverFile(null);
+    setIsEditing(true);
+  };
+
+  const handleEditCancel = () => {
+    if (!userDetails) return;
+    clearError();
+    setSaveMessage('');
+    setFormData({
+      fullname: userDetails.fullname || '',
+      email: userDetails.email || '',
+    });
+    setAvatarFile(null);
+    setCoverFile(null);
+    setIsEditing(false);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!formData.fullname.trim() || !formData.email.trim()) return;
+
+    try {
+      setIsSaving(true);
+      clearError();
+
+      await updateUser({
+        fullname: formData.fullname.trim(),
+        email: formData.email.trim(),
+      });
+
+      if (avatarFile) {
+        const avatarFormData = new FormData();
+        avatarFormData.append('avatar', avatarFile);
+        await api.patch('/users/update-avatar', avatarFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
+      if (coverFile) {
+        const coverFormData = new FormData();
+        coverFormData.append('coverImage', coverFile);
+        await api.patch('/users/update-coverimage', coverFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
+      await refreshUser();
+      setSaveMessage('Profile details updated successfully.');
+      setAvatarFile(null);
+      setCoverFile(null);
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="p-4 lg:p-6 space-y-6">
       {/* Cover Image and Avatar Section */}
       <Card className="overflow-hidden">
         {/* Cover Image */}
@@ -119,7 +210,7 @@ export default function UserProfile() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  <span>Member since {userDetails?.createdAt ? new Date(userDetails.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'N/A'}</span>
+                  <span>Member since {userDetails?.createdAt ? formatDateDDMMYYYY(userDetails.createdAt) : 'N/A'}</span>
                 </div>
               </div>
             </div>
@@ -156,13 +247,44 @@ export default function UserProfile() {
         {/* Account Details */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Account Details
-            </CardTitle>
+            <div className="flex items-center justify-between gap-3">
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Account Details
+              </CardTitle>
+              {!isEditing ? (
+                <Button size="sm" variant="outline" onClick={handleEditStart} className="flex items-center gap-2">
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button size="sm" variant="outline" onClick={handleEditCancel} disabled={isSaving}>
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleSaveProfile}
+                    disabled={isSaving || !formData.fullname.trim() || !formData.email.trim()}
+                  >
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </Button>
+                </div>
+              )}
+            </div>
             <CardDescription>Your account information and settings</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {saveMessage && (
+              <Alert>
+                <AlertDescription>{saveMessage}</AlertDescription>
+              </Alert>
+            )}
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2 border-b">
                 <span className="text-sm font-medium text-muted-foreground">User ID</span>
@@ -170,18 +292,79 @@ export default function UserProfile() {
                   {userDetails?._id?.slice(-8) || 'N/A'}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b">
-                <span className="text-sm font-medium text-muted-foreground">Full Name</span>
-                <span className="text-sm font-medium">{userDetails?.fullname}</span>
-              </div>
+              {isEditing ? (
+                <div className="py-2 border-b space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Full Name</label>
+                  <Input
+                    value={formData.fullname}
+                    onChange={(e) => {
+                      setFormData((prev) => ({ ...prev, fullname: e.target.value }));
+                      if (saveMessage) setSaveMessage('');
+                    }}
+                    placeholder="Enter full name"
+                    disabled={isSaving}
+                  />
+                </div>
+              ) : (
+                <div className="flex justify-between items-center py-2 border-b">
+                  <span className="text-sm font-medium text-muted-foreground">Full Name</span>
+                  <span className="text-sm font-medium">{userDetails?.fullname}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center py-2 border-b">
                 <span className="text-sm font-medium text-muted-foreground">Username</span>
                 <span className="text-sm font-medium">@{userDetails?.username}</span>
               </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-sm font-medium text-muted-foreground">Email</span>
-                <span className="text-sm font-medium">{userDetails?.email}</span>
-              </div>
+              {isEditing ? (
+                <div className="py-2 space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Email</label>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => {
+                      setFormData((prev) => ({ ...prev, email: e.target.value }));
+                      if (saveMessage) setSaveMessage('');
+                    }}
+                    placeholder="Enter email"
+                    disabled={isSaving}
+                  />
+                </div>
+              ) : (
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-sm font-medium text-muted-foreground">Email</span>
+                  <span className="text-sm font-medium">{userDetails?.email}</span>
+                </div>
+              )}
+
+              {isEditing && (
+                <>
+                  <div className="py-2 border-t space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Change Avatar</label>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                      disabled={isSaving}
+                    />
+                    {avatarFile && (
+                      <p className="text-xs text-muted-foreground">Selected: {avatarFile.name}</p>
+                    )}
+                  </div>
+
+                  <div className="py-2 space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Change Cover Image</label>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
+                      disabled={isSaving}
+                    />
+                    {coverFile && (
+                      <p className="text-xs text-muted-foreground">Selected: {coverFile.name}</p>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -206,13 +389,13 @@ export default function UserProfile() {
               <div className="flex justify-between items-center py-2 border-b">
                 <span className="text-sm font-medium text-muted-foreground">Account Created</span>
                 <span className="text-sm font-medium">
-                  {userDetails?.createdAt ? new Date(userDetails.createdAt).toLocaleDateString() : 'N/A'}
+                  {userDetails?.createdAt ? formatDateDDMMYYYY(userDetails.createdAt) : 'N/A'}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b">
                 <span className="text-sm font-medium text-muted-foreground">Last Updated</span>
                 <span className="text-sm font-medium">
-                  {userDetails?.updatedAt ? new Date(userDetails.updatedAt).toLocaleDateString() : 'N/A'}
+                  {userDetails?.updatedAt ? formatDateDDMMYYYY(userDetails.updatedAt) : 'N/A'}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">

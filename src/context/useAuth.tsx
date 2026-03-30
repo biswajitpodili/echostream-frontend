@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-console.log("🌐 Backend URL:", backendUrl);
+const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+console.log("🌐 Auth Backend URL:", backendUrl);
 
 // Types
 export interface User {
@@ -137,7 +137,7 @@ const authAPI = {
   },
 
   updateUser: async (userData: Partial<User>): Promise<User> => {
-    const response = await fetch(`${backendUrl}/users/update-profile`, {
+    const response = await fetch(`${backendUrl}/users/update-user`, {
       method: "PATCH",
       credentials: "include",
       headers: {
@@ -204,10 +204,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       setError(null);
 
-      const { user: userData } = await authAPI.signup(username, password, name);
+      await authAPI.signup(username, password, name);
 
-      // No need to store tokens in localStorage - httpOnly cookies handle this
-      setUser(userData);
+      // Keep user unauthenticated after signup so login is explicit.
+      setUser(null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Signup failed";
       setError(errorMessage);
