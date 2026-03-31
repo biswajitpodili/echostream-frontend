@@ -59,15 +59,12 @@ export default function DashboardLayout() {
     setItem(item);
   }, [pathname]);
 
-  console.log("Current sub-group:", group);
-  console.log("Current item:", item);
-
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="bg-background sticky top-0 flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 z-[100]">
-          <div className="flex flex-row items-center gap-2 min-w-0">
+        <header className="bg-background sticky top-0 z-[100] flex min-h-16 shrink-0 flex-wrap items-center justify-between gap-2 border-b px-3 py-2 sm:flex-nowrap sm:px-4">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             <SidebarTrigger className="-ml-1 cursor-pointer" />
             <Separator
               orientation="vertical"
@@ -82,20 +79,20 @@ export default function DashboardLayout() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="min-w-0">
-                  <BreadcrumbPage className="block max-w-[42vw] truncate sm:max-w-none">
+                  <BreadcrumbPage className="block max-w-[38vw] truncate sm:max-w-none">
                     {item?.split("/").pop()?.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') || 'Home'}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="flex flex-row items-center gap-4 justify-center">
-            <div className="flex items-center gap-4">
-              <div className="relative">
+          <div className="flex w-auto items-center justify-end gap-2 sm:gap-4">
+            <div className="hidden items-center gap-4 md:flex">
+              <div className="relative w-44 lg:w-56">
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="pl-8 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full rounded-md border bg-background py-2 pl-8 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 />
 
                 <Search
@@ -104,7 +101,17 @@ export default function DashboardLayout() {
                   fill="none"
                 />
               </div>
+            </div>
 
+            <button
+              type="button"
+              className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground md:hidden"
+              aria-label="Search"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+
+            <div className="flex items-center gap-2 sm:gap-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div className="bg-accent p-2 rounded-full cursor-pointer">
@@ -172,11 +179,11 @@ export default function DashboardLayout() {
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
+              <ModeToggle />
             </div>
-            <ModeToggle />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4">
           <Outlet />
         </div>
       </SidebarInset>

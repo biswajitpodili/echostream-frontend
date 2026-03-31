@@ -58,13 +58,13 @@ const ChannelSearch = () => {
                 <ArrowLeft size={16} /> Back
             </button>
 
-            <div className="max-w-3xl mx-auto space-y-12">
+            <div className="mx-auto max-w-3xl space-y-10 sm:space-y-12">
                 {/* Header */}
                 <div className="text-center space-y-4">
-                    <h1 className="text-5xl lg:text-6xl font-black tracking-tighter">
+                    <h1 className="text-3xl font-black tracking-tighter sm:text-5xl lg:text-6xl">
                         Find <span className="text-primary">Creators</span>
                     </h1>
-                    <p className="text-muted-foreground text-lg font-semibold max-w-xl mx-auto">
+                    <p className="mx-auto max-w-xl text-base font-semibold text-muted-foreground sm:text-lg">
                         Search for creators and explore their channels on echoStream
                     </p>
                 </div>
@@ -76,7 +76,7 @@ const ChannelSearch = () => {
                         <input
                             type="text"
                             placeholder="Search by username..."
-                            className="w-full bg-muted/20 border-2 border-border rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all font-semibold text-lg group-hover:bg-muted/40"
+                            className="w-full rounded-2xl border-2 border-border bg-muted/20 py-3 pl-12 pr-4 text-base font-semibold transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/20 group-hover:bg-muted/40 sm:py-4 sm:pl-14 sm:pr-6 sm:text-lg"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             autoFocus
@@ -84,7 +84,7 @@ const ChannelSearch = () => {
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-primary text-white py-3 rounded-2xl font-black uppercase tracking-widest text-base shadow-xl shadow-primary/30 hover:scale-105 transition-transform active:scale-95"
+                        className="w-full bg-primary text-white dark:text-black py-3 rounded-2xl font-black uppercase tracking-widest text-base shadow-xl shadow-primary/30 hover:scale-105 transition-transform active:scale-95"
                     >
                         Search Channel
                     </button>
@@ -118,22 +118,22 @@ const ChannelSearch = () => {
                                     className="group bg-muted/10 border border-border rounded-3xl p-6 hover:border-primary/50 hover:bg-muted/20 transition-all cursor-pointer"
                                     onClick={() => handleChannelClick(channel.username)}
                                 >
-                                    <div className="flex items-center gap-6">
+                                    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
                                         <img
                                             src={channel.avatar}
                                             alt={channel.fullname}
-                                            className="w-24 h-24 rounded-2xl border-2 border-primary/20 object-cover group-hover:scale-110 transition-transform"
+                                            className="h-20 w-20 rounded-2xl border-2 border-primary/20 object-cover transition-transform group-hover:scale-110 sm:h-24 sm:w-24"
                                         />
                                         <div className="flex-1 space-y-3">
                                             <div>
-                                                <h3 className="text-2xl font-black group-hover:text-primary transition-colors">
+                                                <h3 className="text-xl font-black transition-colors group-hover:text-primary sm:text-2xl">
                                                     {channel.fullname}
                                                 </h3>
                                                 <p className="text-muted-foreground font-black uppercase text-sm tracking-widest lowercase">
                                                     @{channel.username}
                                                 </p>
                                             </div>
-                                            <p className="text-muted-foreground font-semibold text-sm">{channel.email}</p>
+                                            <p className="break-all text-sm font-semibold text-muted-foreground">{channel.email}</p>
                                             {channel.subscribersCount !== undefined && (
                                                 <div className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-muted-foreground">
                                                     <span className="flex items-center gap-1">
@@ -143,7 +143,7 @@ const ChannelSearch = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="text-primary group-hover:translate-x-2 transition-transform">
+                                        <div className="self-end text-primary transition-transform group-hover:translate-x-2 sm:self-center">
                                             <ArrowRight size={32} />
                                         </div>
                                     </div>

@@ -187,7 +187,7 @@ const WatchVideo = () => {
     if (!video) return <div className="flex items-center justify-center min-h-screen font-black uppercase tracking-tighter">Video vanished into the void.</div>;
 
     return (
-        <div className="p-4 lg:p-4 py-0 space-y-6">
+        <div className="space-y-6 px-3 py-0 sm:px-4">
             <AuthPromptDialog />
             {/* Back Button */}
             <button 
@@ -197,15 +197,15 @@ const WatchVideo = () => {
                 <ArrowLeft size={16} /> Back to Discovery
             </button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="rounded-[2.5rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4)] bg-black aspect-video border border-white/5">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+                <div className="space-y-6 lg:col-span-2">
+                    <div className="aspect-video overflow-hidden rounded-2xl border border-white/5 bg-black shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4)] sm:rounded-[2.5rem]">
                         <VideoPlayer src={video.videoFile} />
                     </div>
 
                     <div className="space-y-4 px-2">
-                        <div className="flex justify-between items-start gap-4">
-                            <h1 className="text-2xl lg:text-3xl font-black tracking-tighter leading-none">{video.title}</h1>
+                        <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
+                            <h1 className="text-xl font-black leading-tight tracking-tighter sm:text-2xl lg:text-3xl">{video.title}</h1>
                             {video.isLiked && (
                                 <div className="px-3 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full text-[9px] font-black uppercase tracking-widest animate-in zoom-in slide-in-from-right duration-500 flex items-center gap-1.5 shrink-0">
                                     <CheckCircle2 size={12} /> Liked by you
@@ -213,10 +213,10 @@ const WatchVideo = () => {
                             )}
                         </div>
                         
-                        <div className="flex flex-wrap justify-between items-center gap-6 py-4 border-b border-border">
-                            <div className="flex items-center gap-4">
-                                <img src={video.owner.avatar} className="w-14 h-14 rounded-[1.25rem] border-2 border-primary/20 shadow-md object-cover" alt="" />
-                                <div>
+                        <div className="flex flex-col gap-4 border-b border-border py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+                            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                                <img src={video.owner.avatar} className="h-12 w-12 rounded-xl border-2 border-primary/20 object-cover shadow-md sm:h-14 sm:w-14 sm:rounded-[1.25rem]" alt="" />
+                                <div className="min-w-0">
                                     <h3 className="font-black text-lg leading-none flex items-center gap-2">
                                         {video.owner.fullname}
                                         {video.owner.isSubscribedtoThisChannel && <CheckCircle2 size={14} className="text-primary" />}
@@ -226,7 +226,7 @@ const WatchVideo = () => {
                                 <button 
                                     onClick={handleSubscribe}
                                     className={cn(
-                                        "ml-4 px-8 py-3 rounded-2xl font-black uppercase text-xs shadow-xl transition-all active:scale-95",
+                                        "px-5 py-2.5 sm:ml-2 sm:px-8 sm:py-3 rounded-2xl font-black uppercase text-xs shadow-xl transition-all active:scale-95",
                                         video.owner.isSubscribedtoThisChannel 
                                             ? "bg-muted text-muted-foreground border border-border" 
                                             : "bg-transparent border border-white/30 text-white hover:scale-105"
@@ -236,11 +236,11 @@ const WatchVideo = () => {
                                 </button>
                             </div>
 
-                            <div className="flex items-center gap-2 bg-muted/20 p-2 rounded-[1.5rem] border border-border/50">
+                            <div className="flex flex-wrap items-center gap-2 rounded-[1.5rem] border border-border/50 bg-muted/20 p-2">
                                 <button 
                                     onClick={handleLike}
                                     className={cn(
-                                        "flex items-center gap-2 px-6 py-3 rounded-xl font-black text-xs transition-all",
+                                        "flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black transition-all sm:px-6 sm:py-3",
                                         video.isLiked 
                                             ? "bg-primary text-black shadow-lg" 
                                             : "text-muted-foreground hover:text-primary hover:bg-muted"
@@ -259,15 +259,15 @@ const WatchVideo = () => {
                                     <ThumbsDown size={18} />
                                 </button>
                                 <Separator orientation="vertical" className="h-8" />
-                                <div className="flex items-center gap-2 px-4 cursor-pointer group/share">
+                                <div className="group/share flex items-center gap-2 px-2 sm:px-4">
                                     <Share2 size={18} className="text-muted-foreground group-hover/share:text-primary transition-colors" />
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground group-hover/share:text-white transition-colors">Share</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-muted/30 rounded-[2rem] p-8 space-y-4 border border-border/50 shadow-inner">
-                            <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                        <div className="space-y-4 rounded-2xl border border-border/50 bg-muted/30 p-4 shadow-inner sm:rounded-[2rem] sm:p-8">
+                            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
                                 <span className="flex items-center gap-1.5 text-primary"><Eye size={14}/> {video.views} Views</span>
                                 <span className="flex items-center gap-1.5"><Clock size={14} /> {formatDateDDMMYYYY(video.createdAt)}</span>
                             </div>
@@ -277,24 +277,24 @@ const WatchVideo = () => {
                         </div>
 
                         <div className="pt-10 space-y-10">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-3xl font-black tracking-tighter">Community <span className="text-primary">Voice</span> ({video.comments.length})</h2>
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                <h2 className="text-2xl font-black tracking-tighter sm:text-3xl">Community <span className="text-primary">Voice</span> ({video.comments.length})</h2>
                                 <div className="flex items-center gap-2 text-[10px] font-black uppercase text-muted-foreground tracking-widest border border-border px-3 py-1.5 rounded-full cursor-pointer hover:bg-muted">
                                     <span>Sort By</span>
                                     <MoreVertical size={14} />
                                 </div>
                             </div>
 
-                            <form onSubmit={handleComment} className="flex gap-4 items-start bg-primary/5 p-8 rounded-[2.5rem] border border-primary/10 group focus-within:border-primary/30 transition-all">
+                            <form onSubmit={handleComment} className="group flex flex-col items-start gap-4 rounded-2xl border border-primary/10 bg-primary/5 p-4 transition-all focus-within:border-primary/30 sm:flex-row sm:rounded-[2.5rem] sm:p-8">
                                 <img src={user?.avatar} className="w-12 h-12 rounded-2xl shadow-xl border-2 border-primary/20 shrink-0" alt="" />
-                                <div className="flex-1 space-y-4">
+                                <div className="w-full flex-1 space-y-4">
                                     <textarea 
                                         className="w-full bg-transparent border-b border-border/50 focus:border-primary outline-none transition-colors p-2 text-sm font-semibold tracking-tight placeholder:text-muted-foreground/50 resize-none min-h-[60px]" 
                                         placeholder="Add a comment on echoStream..."
                                         value={commentText}
                                         onChange={(e) => setCommentText(e.target.value)}
                                     ></textarea>
-                                    <div className="flex justify-end gap-3">
+                                    <div className="flex flex-wrap justify-end gap-3">
                                         {commentText && (
                                             <button 
                                                 type="button" 
@@ -352,7 +352,7 @@ const WatchVideo = () => {
                     </div>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                     <div className="flex items-center justify-between px-2">
                         <h2 className="text-xl font-black uppercase tracking-tighter">Echo <span className="text-primary">Next</span></h2>
                         <span className="text-[10px] font-black px-2 py-1 bg-primary text-white rounded-lg animate-pulse tracking-widest">LIVE</span>
@@ -368,9 +368,9 @@ const WatchVideo = () => {
                                 <div 
                                     key={v._id} 
                                     onClick={() => navigate(`/watch/${v._id}`)}
-                                    className="flex gap-4 group cursor-pointer p-3 rounded-[1.5rem] hover:bg-muted/40 transition-all border border-transparent hover:border-border/50"
+                                    className="group flex gap-3 rounded-[1.5rem] border border-transparent p-3 transition-all hover:border-border/50 hover:bg-muted/40 sm:gap-4"
                                 >
-                                    <div className="w-40 md:w-48 aspect-video rounded-xl overflow-hidden shadow-lg border border-white/5 shrink-0">
+                                    <div className="aspect-video w-28 shrink-0 overflow-hidden rounded-xl border border-white/5 shadow-lg sm:w-40 md:w-48">
                                         <img src={v.thumbnail} className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-in-out" alt="" />
                                     </div>
                                     <div className="space-y-1.5 flex-1 min-w-0">

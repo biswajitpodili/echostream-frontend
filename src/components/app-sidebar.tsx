@@ -25,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
 import { Link, useLocation, useNavigate } from "react-router";
@@ -116,10 +117,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { logout, isAuthenticated } = useAuth();
+  const { isMobile, setOpenMobile } = useSidebar();
   const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
   const [lockedTarget, setLockedTarget] = React.useState<{ url: string; title: string } | null>(null);
 
+  const closeMobileSidebar = React.useCallback(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [isMobile, setOpenMobile]);
+
   const handleLockedItemClick = (url: string, title: string) => {
+    closeMobileSidebar();
     setLockedTarget({ url, title });
     setLoginDialogOpen(true);
   };
@@ -177,7 +186,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         </SidebarMenuButton>
                       ) : (
                         <SidebarMenuButton asChild isActive={item.url === pathname}>
-                          <Link to={item.url} className="flex items-center gap-2">
+                          <Link to={item.url} onClick={closeMobileSidebar} className="flex items-center gap-2">
                             <IconComponent size={18} />
                             {item.title}
                           </Link>
@@ -194,12 +203,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter className="border-sidebar-border h-16 border-t flex justify-center items-center">
         {isAuthenticated ? (
-          <Button onClick={logout} className="w-full">
+          <Button
+            onClick={() => {
+              closeMobileSidebar();
+              logout();
+            }}
+            className="w-full"
+          >
             Logout
           </Button>
         ) : (
           <Button
-            onClick={() => navigate("/login", { state: { from: pathname } })}
+            onClick={() => {
+              closeMobileSidebar();
+              navigate("/login", { state: { from: pathname } });
+            }}
             className="w-full"
           >
             Login

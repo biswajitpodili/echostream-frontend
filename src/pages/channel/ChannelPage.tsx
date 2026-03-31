@@ -258,10 +258,10 @@ const ChannelPage = () => {
             </div> */}
 
             {/* Cover Image */}
-            <div className="relative h-64 lg:h-80 overflow-hidden bg-gradient-to-r from-primary/20 to-primary/5">
+            <div className="relative h-52 overflow-hidden bg-gradient-to-r from-primary/20 to-primary/5 sm:h-64 lg:h-80">
                 <button
                     onClick={() => navigate(-1)}
-                    className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 hover:bg-muted rounded-2xl transition-colors font-black uppercase text-xs tracking-widest text-muted-foreground hover:text-primary mb-4"
+                    className="absolute left-3 top-3 flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-black uppercase tracking-widest text-muted-foreground transition-colors hover:bg-muted hover:text-primary sm:left-4 sm:top-4 sm:px-4"
                 >
                     <ArrowLeft size={16} /> Back
                 </button>
@@ -280,16 +280,16 @@ const ChannelPage = () => {
             <div className="px-4 lg:px-8 pb-12">
                 <div className="max-w-6xl mx-auto">
                     {/* Channel Header */}
-                    <div className="flex flex-col md:flex-row md:items-end gap-6 -mt-20 mb-12 relative z-10">
+                    <div className="relative z-10 -mt-16 mb-10 flex flex-col gap-4 sm:-mt-20 sm:mb-12 md:flex-row md:items-end md:gap-6">
                         <img
                             src={channel.avatar}
                             alt={channel.fullname}
-                            className="w-40 h-40 rounded-3xl border-4 border-background shadow-2xl object-cover"
+                            className="h-28 w-28 rounded-3xl border-4 border-background object-cover shadow-2xl sm:h-40 sm:w-40"
                         />
 
                         <div className="flex-1 space-y-4">
                             <div>
-                                <h1 className="text-4xl lg:text-5xl font-black tracking-tighter">{channel.fullname}</h1>
+                                <h1 className="text-3xl font-black tracking-tighter sm:text-4xl lg:text-5xl">{channel.fullname}</h1>
                                 <p className="text-muted-foreground font-bold text-sm pt-1">@{channel.username}</p>
                             </div>
 
@@ -308,7 +308,7 @@ const ChannelPage = () => {
                                 <button
                                     onClick={handleSubscribe}
                                     className={cn(
-                                        "px-8 py-2.5 rounded-full font-black uppercase text-xs shadow-lg transition-all active:scale-95",
+                                        "rounded-full px-6 py-2.5 text-xs font-black uppercase shadow-lg transition-all active:scale-95 sm:px-8",
                                         isSubscribed
                                             ? "bg-muted text-muted-foreground border border-border hover:bg-red-500 hover:text-white hover:border-red-600"
                                             : "bg-primary text-white hover:scale-105"
@@ -328,8 +328,8 @@ const ChannelPage = () => {
 
                     {/* Videos Section */}
                     <div className="space-y-8">
-                        <div className="flex items-center justify-between gap-4">
-                            <h2 className="text-3xl font-black tracking-tighter flex items-center gap-2">
+                        <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+                            <h2 className="flex items-center gap-2 text-2xl font-black tracking-tighter sm:text-3xl">
                                 {activeTab === "videos" ? (
                                     <>
                                         <Video size={28} className="text-primary" />
@@ -343,11 +343,11 @@ const ChannelPage = () => {
                                 )}
                             </h2>
 
-                            <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/20 p-1">
+                            <div className="flex w-full items-center gap-2 rounded-2xl border border-border bg-muted/20 p-1 sm:w-auto">
                                 <button
                                     onClick={() => setActiveTab("videos")}
                                     className={cn(
-                                        "px-4 py-2 text-xs font-black uppercase rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:focus-visible:text-black",
+                                        "flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:focus-visible:text-black sm:flex-none",
                                         activeTab === "videos" ? "bg-primary text-black" : "text-muted-foreground hover:bg-muted"
                                     )}
                                 >
@@ -356,7 +356,7 @@ const ChannelPage = () => {
                                 <button
                                     onClick={() => setActiveTab("tweets")}
                                     className={cn(
-                                        "px-4 py-2 text-xs font-black uppercase rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:focus-visible:text-black",
+                                        "flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:focus-visible:text-black sm:flex-none",
                                         activeTab === "tweets" ? "bg-primary text-black" : "text-muted-foreground hover:bg-muted"
                                     )}
                                 >

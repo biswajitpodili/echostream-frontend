@@ -148,11 +148,11 @@ export default function UserProfile() {
   };
 
   return (
-    <div className="p-4 lg:p-6 space-y-6">
+    <div className="space-y-6 p-4 lg:p-6">
       {/* Cover Image and Avatar Section */}
       <Card className="overflow-hidden">
         {/* Cover Image */}
-        <div className="relative h-48 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+        <div className="relative h-40 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 sm:h-48">
           {userDetails?.coverImage ? (
             <img 
               src={userDetails.coverImage} 
@@ -164,8 +164,8 @@ export default function UserProfile() {
           )}
           
           {/* Profile Avatar - Positioned over cover image */}
-          <div className="absolute -bottom-16 left-8">
-            <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
+          <div className="absolute -bottom-12 left-4 sm:-bottom-16 sm:left-8">
+            <Avatar className="h-24 w-24 border-4 border-background shadow-lg sm:h-32 sm:w-32">
               {userDetails?.avatar ? (
                 <img 
                   src={userDetails.avatar} 
@@ -174,7 +174,7 @@ export default function UserProfile() {
                 />
               ) : (
                 <div className="bg-background flex items-center justify-center h-full w-full">
-                  <User className="h-16 w-16 text-muted-foreground" />
+                  <User className="h-10 w-10 text-muted-foreground sm:h-16 sm:w-16" />
                 </div>
               )}
             </Avatar>
@@ -189,21 +189,21 @@ export default function UserProfile() {
         </div>
 
         {/* Profile Info */}
-        <CardContent className="pt-20 pb-6">
+        <CardContent className="pb-6 pt-14 sm:pt-20">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">{userDetails?.fullname}</h1>
-              <div className="flex items-center gap-4 text-muted-foreground mb-4">
+              <h1 className="mb-2 text-2xl font-bold sm:text-3xl">{userDetails?.fullname}</h1>
+              <div className="mb-4 flex flex-col gap-2 text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex items-center gap-1">
                   <AtSign className="h-4 w-4" />
-                  <span>{userDetails?.username}</span>
+                  <span className="break-all">{userDetails?.username}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Mail className="h-4 w-4" />
-                  <span>{userDetails?.email}</span>
+                  <span className="break-all">{userDetails?.email}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex items-center gap-1">
                   <Play className="h-4 w-4" />
                   <span>{userDetails?.watchHistory?.length || 0} videos watched</span>
@@ -216,7 +216,7 @@ export default function UserProfile() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2">
+            <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:flex-nowrap">
               <Button 
                 onClick={handleRefresh} 
                 variant="outline" 
@@ -306,14 +306,14 @@ export default function UserProfile() {
                   />
                 </div>
               ) : (
-                <div className="flex justify-between items-center py-2 border-b">
+                <div className="flex flex-col gap-1 py-2 border-b sm:flex-row sm:items-center sm:justify-between">
                   <span className="text-sm font-medium text-muted-foreground">Full Name</span>
                   <span className="text-sm font-medium">{userDetails?.fullname}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center py-2 border-b">
+              <div className="flex flex-col gap-1 py-2 border-b sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">Username</span>
-                <span className="text-sm font-medium">@{userDetails?.username}</span>
+                <span className="text-sm font-medium break-all">@{userDetails?.username}</span>
               </div>
               {isEditing ? (
                 <div className="py-2 space-y-2">
@@ -330,9 +330,9 @@ export default function UserProfile() {
                   />
                 </div>
               ) : (
-                <div className="flex justify-between items-center py-2">
+                <div className="flex flex-col gap-1 py-2 sm:flex-row sm:items-center sm:justify-between">
                   <span className="text-sm font-medium text-muted-foreground">Email</span>
-                  <span className="text-sm font-medium">{userDetails?.email}</span>
+                  <span className="text-sm font-medium break-all">{userDetails?.email}</span>
                 </div>
               )}
 
@@ -380,25 +380,25 @@ export default function UserProfile() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
-              <div className="flex justify-between items-center py-2 border-b">
+              <div className="flex items-center justify-between gap-3 py-2 border-b">
                 <span className="text-sm font-medium text-muted-foreground">Videos Watched</span>
                 <Badge variant="secondary" className="font-mono">
                   {userDetails?.watchHistory?.length || 0}
                 </Badge>
               </div>
-              <div className="flex justify-between items-center py-2 border-b">
+              <div className="flex flex-col gap-1 py-2 border-b sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">Account Created</span>
                 <span className="text-sm font-medium">
                   {userDetails?.createdAt ? formatDateDDMMYYYY(userDetails.createdAt) : 'N/A'}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b">
+              <div className="flex flex-col gap-1 py-2 border-b sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">Last Updated</span>
                 <span className="text-sm font-medium">
                   {userDetails?.updatedAt ? formatDateDDMMYYYY(userDetails.updatedAt) : 'N/A'}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-2">
+              <div className="flex flex-col gap-2 py-2 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">Profile Images</span>
                 <div className="flex gap-2">
                   <Badge variant={userDetails?.avatar ? "default" : "outline"} className="text-xs">

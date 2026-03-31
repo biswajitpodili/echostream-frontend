@@ -41,13 +41,13 @@ const YourVideos = () => {
     }
 
     return (
-        <div className="p-4 lg:p-6 space-y-8">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-border pb-8">
+        <div className="space-y-8 p-4 lg:p-6">
+            <header className="flex flex-col items-start justify-between gap-4 border-b border-border pb-6 md:flex-row md:items-center md:gap-6 md:pb-8">
                 <div className="space-y-1">
-                    <h1 className="text-4xl font-black tracking-tighter">Your Videos</h1>
+                    <h1 className="text-3xl font-black tracking-tighter sm:text-4xl">Your Videos</h1>
                     <p className="text-muted-foreground font-semibold italic text-sm">Manage and monitor your digital broadcast empire.</p>
                 </div>
-                <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-2xl border border-border">
+                <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/30 p-1.5">
                     <button 
                         onClick={() => setViewMode("grid")}
                         className={cn("p-2 rounded-xl transition-all", viewMode === "grid" ? "bg-primary text-white shadow-lg" : "text-muted-foreground hover:bg-muted")}
@@ -80,7 +80,7 @@ const YourVideos = () => {
                     </button>
                 </div>
             ) : viewMode === "grid" ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {videos.map((video) => (
                         <div key={video._id} className="group relative bg-muted/10 rounded-3xl overflow-hidden border border-border/50 hover:shadow-2xl transition-all">
                             <div className="relative aspect-video">
@@ -121,20 +121,20 @@ const YourVideos = () => {
                     ))}
                 </div>
             ) : (
-                <div className="border border-border rounded-3xl overflow-hidden bg-muted/10">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto rounded-3xl border border-border bg-muted/10">
+                    <table className="w-full min-w-[640px] text-left">
                         <thead className="bg-muted/50 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                             <tr>
-                                <th className="p-6">Video</th>
-                                <th className="p-6">Upload Date</th>
-                                <th className="p-6">Views</th>
-                                <th className="p-6 text-right">Actions</th>
+                                <th className="p-4 sm:p-6">Video</th>
+                                <th className="p-4 sm:p-6">Upload Date</th>
+                                <th className="p-4 sm:p-6">Views</th>
+                                <th className="p-4 text-right sm:p-6">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
                             {videos.map((video) => (
                                 <tr key={video._id} className="group hover:bg-muted/30 transition-all">
-                                    <td className="p-6">
+                                    <td className="p-4 sm:p-6">
                                         <div className="flex items-center gap-4">
                                             <img src={video.thumbnail} className="w-24 h-14 object-cover rounded-xl shadow-md" alt={video.title} />
                                             <div className="space-y-1">
@@ -145,9 +145,9 @@ const YourVideos = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="p-6 text-xs font-bold">{formatDateDDMMYYYY(video.createdAt)}</td>
-                                    <td className="p-6 text-xs font-bold font-mono tracking-tighter">{video.views.toLocaleString()}</td>
-                                    <td className="p-6">
+                                    <td className="p-4 text-xs font-bold sm:p-6">{formatDateDDMMYYYY(video.createdAt)}</td>
+                                    <td className="p-4 text-xs font-bold font-mono tracking-tighter sm:p-6">{video.views.toLocaleString()}</td>
+                                    <td className="p-4 sm:p-6">
                                         <div className="flex items-center justify-end gap-2">
                                             <button className="bg-muted p-2 rounded-xl text-muted-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
                                                 <Edit2 size={16} />
